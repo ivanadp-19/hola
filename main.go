@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/openfoodfacts/openfoodfacts-go"
 )
@@ -62,6 +63,15 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	http.HandleFunc("/", handler)
-	fmt.Println("Server is listening on port 8080...")
-	http.ListenAndServe(":8080", nil)
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080" // Use a default port if PORT is not set
+	}
+
+	fmt.Printf("Server is listening on port %s...\n", port)
+	err := http.ListenAndServe(":"+port, nil)
+	if err != nil {
+		fmt.Printf("Failed to start server: %v\n", err)
+	}
 }
